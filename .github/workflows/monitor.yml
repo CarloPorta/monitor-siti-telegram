@@ -1,33 +1,36 @@
-name: Monitor Siti
+name: Website Monitor
 
 on:
   schedule:
-    - cron: "0 13 * * *"
+    - cron: '0 13 * * *'   # Ogni giorno alle 08:00 UTC
   workflow_dispatch:
 
 jobs:
-  check:
+  monitor:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install requests beautifulsoup4
 
       - name: Run monitor
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python monitor.py
-        - name: Commit hash changes
+
+      - name: Commit hash changes
         run: |
-    git config --global user.name "github-actions"
-    git config --global user.email "actions@github.com"
-    git add hashes/
-    git commit -m "Update hashes" || echo "No changes"
-    git push
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add hashes/
+          git commit -m "Update hashes" || echo "No changes"
+          git push

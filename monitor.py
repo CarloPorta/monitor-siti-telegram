@@ -25,6 +25,7 @@ with open("urls.txt", "r") as f:
 for url in urls:
     try:
         response = requests.get(url, timeout=15)
+        print("Lunghezza pagina:", len(response.text))
         current_hash = get_hash(response.text)
 
         filename = "hashes/" + get_hash(url) + ".txt"
